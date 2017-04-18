@@ -42,7 +42,7 @@ Spark-Runner允许用户在Apache Spark上执行使用Apache Beam API编写的�
 Spark runner提供的容错机制与[Apache Spark](http://spark.apache.org/)一致
 ### 监控
 
-Spark runner支持通过Beam Aggregators（实现了Spark的 [Aggregators/聚合器](http://spark.apache.org/docs/1.6.3/programming-guide.html#accumulators)）支持用户自定义的计数器。这个Aggregators/聚合器（由管道作者定义）和Spark内部的度量机制通过Spark的[Metrics System/度量系统](http://spark.apache.org/docs/1.6.3/monitoring.html#metrics)给出度量报告。
+Spark runner支持通过Beam Aggregators（实现了Spark的 [Accumulators](http://spark.apache.org/docs/1.6.3/programming-guide.html#accumulators)）支持用户自定义的计数器。这个Aggregators/聚合器（由管道作者定义）和Spark内部的度量机制通过Spark的[Metrics System/度量系统](http://spark.apache.org/docs/1.6.3/monitoring.html#metrics)给出度量报告。
 
 ## Beam 模型支持
 
