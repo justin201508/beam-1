@@ -20,14 +20,13 @@
 Spark Beam Runner (Spark-Runner)
 ================================
 
-## Intro
+## 简介
 
-The Spark-Runner allows users to execute data pipelines written against the Apache Beam API
-with Apache Spark. This runner allows to execute both batch and streaming pipelines on top of the Spark engine.
+Spark-Runner允许用户在Apache Spark上执行使用Apache Beam API编写的数据管道。Spark Runner允许在Spark引擎之上执行批处理和流式计算数据管道。
 
-## Overview
+## 概述
 
-### Features
+### 特性集
 
 - ParDo
 - GroupByKey
@@ -38,54 +37,46 @@ with Apache Spark. This runner allows to execute both batch and streaming pipeli
 - Side inputs/outputs
 - Encoding
 
-### Fault-Tolerance
+### 容错
 
-The Spark runner fault-tolerance guarantees the same guarantees as [Apache Spark](http://spark.apache.org/).
+Spark runner提供的容错机制与[Apache Spark](http://spark.apache.org/)一致
+### 监控
 
-### Monitoring
+Spark runner支持通过Beam Aggregators（实现了Spark的 [Aggregators/聚合器](http://spark.apache.org/docs/1.6.3/programming-guide.html#accumulators)）支持用户自定义的计数器。这个Aggregators/聚合器（由管道作者定义）和Spark内部的度量机制通过Spark的[Metrics System/度量系统](http://spark.apache.org/docs/1.6.3/monitoring.html#metrics)给出度量报告。
 
-The Spark runner supports user-defined counters via Beam Aggregators implemented on top of Spark's [Accumulators](http://spark.apache.org/docs/1.6.3/programming-guide.html#accumulators).  
-The Aggregators (defined by the pipeline author) and Spark's internal metrics are reported using Spark's [metrics system](http://spark.apache.org/docs/1.6.3/monitoring.html#metrics).  
-Spark also provides a web UI for monitoring, more details [here](http://spark.apache.org/docs/1.6.3/monitoring.html).
+## Beam 模型支持
 
-## Beam Model support
+### 批处理
 
-### Batch
+Spark runner通过Spark的[弹性数据集](http://spark.apache.org/docs/1.6.3/programming-guide.html#resilient-distributed-datasets-rdds)提供对Beam批处理编程模型的完全支持。
 
-The Spark runner provides full support for the Beam Model in batch processing via Spark [RDD](http://spark.apache.org/docs/1.6.3/programming-guide.html#resilient-distributed-datasets-rdds)s.
+### 流式计算
 
-### Streaming
+对Beam流式管道编程模型的完全支持正在开发中。你可以通过订阅[邮件列表](http://beam.apache.org/get-started/support/)来跟踪进展。
 
-Providing full support for the Beam Model in streaming pipelines is under development. To follow-up you can subscribe to our [mailing list](http://beam.apache.org/get-started/support/).
+### 问题追踪
 
-### issue tracking
+参考[Beam JIRA](https://issues.apache.org/jira/browse/BEAM) (runner-spark)
 
-See [Beam JIRA](https://issues.apache.org/jira/browse/BEAM) (runner-spark)
+## 开始
 
-
-## Getting Started
-
-To get the latest version of the Spark Runner, first clone the Beam repository:
-
+要获取Spark Runner的最新版本，请首先克隆下面的Beam仓库：
     git clone https://github.com/apache/beam
 
-    
-Then switch to the newly created directory and run Maven to build the Apache Beam:
+然后切换到新创建的git目录，运行下面的Maven命令构建Apache Beam:
 
     cd beam
     mvn clean install -DskipTests
 
-Now Apache Beam and the Spark Runner are installed in your local maven repository.
+这样Apache Beam和Spark Runner就安装到了你的本地maven仓库中。
 
-If we wanted to run a Beam pipeline with the default options of a Spark instance in local mode, 
-we would do the following:
+如果想在本地模式的Spark实例中，使用默认选项运行一个Beam管道，代码如下：
 
     Pipeline p = <logic for pipeline creation >
     PipelineResult result = p.run();
     result.waitUntilFinish();
 
-To create a pipeline runner to run against a different Spark cluster, with a custom master url we
-would do the following:
+如果想要创建一个管道运行器，运行在一个自定义Spark master url的Spark集群中，可以这么做：
 
     SparkPipelineOptions options = PipelineOptionsFactory.as(SparkPipelineOptions.class);
     options.setSparkMaster("spark://host:port");
@@ -93,32 +84,32 @@ would do the following:
     PipelineResult result = p.run();
     result.waitUntilFinish();
 
-## Word Count Example
+## 单词计数的例子
 
-First download a text document to use as input:
+首先下载一个文本文档作为输入：
 
     curl http://www.gutenberg.org/cache/epub/1128/pg1128.txt > /tmp/kinglear.txt
-    
-Switch to the Spark runner directory:
+
+切换到Spark runner目录：
 
     cd runners/spark
-    
-Then run the [word count example][wc] from the SDK using a Spark instance in local mode:
+
+然后在Spark本地模式实例下运行[单词计数例子][wc]：
 
     mvn exec:exec -DmainClass=org.apache.beam.runners.spark.examples.WordCount \
           -Dinput=/tmp/kinglear.txt -Doutput=/tmp/out -Drunner=SparkRunner \
           -DsparkMaster=local
 
-Check the output by running:
+查看运行结果:
 
     head /tmp/out-00000-of-00001
 
-__Note: running examples using `mvn exec:exec` only works for Spark local mode at the
-moment. See the next section for how to run on a cluster.__
+注意：使用`mvn exec:exec`运行例子，仅支持工作在Spark本地模式下。可以查看下面的章节，了解如何在集群模式下运行例子。
 
 [wc]: https://github.com/apache/beam/blob/master/runners/spark/src/main/java/org/apache/beam/runners/spark/examples/WordCount.java
-## Running on a Cluster
+## 运行在Spark集群模式下
 
-Spark Beam pipelines can be run on a cluster using the `spark-submit` command.
+Spark Beam管道可以使用`spark-submit`命令运行在集群模式下。
 
-TBD pending native HDFS support (currently blocked by [BEAM-59](https://issues.apache.org/jira/browse/BEAM-59)).
+
+TBD： 本地hdfs的支持正在开发中 (当前阻塞于 [BEAM-59](https://issues.apache.org/jira/browse/BEAM-59)).
